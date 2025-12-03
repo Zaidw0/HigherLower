@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Higher or Lower - YouTube API</title>
+
+<style>
+    /* === ESTILO GENERAL TIPO YOUTUBE === */
+    body {
+        margin: 0;
+        background: #f1f1f1;
+        font-family: Roboto, Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Barra superior tipo YouTube */
+    .topbar {
+        width: 100%;
+        height: 56px;
+        background: white;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        box-sizing: border-box;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        position: sticky;
+        top: 0;
+    }
+
+    .youtube-logo {
+        height: 26px;
+    }
+
+    h1 {
+        margin: 20px 0 10px;
+        font-size: 26px;
+        font-weight: 500;
+        color: #202020;
+    }
+
+    /* Contenedor general */
+    .container {
+        display: flex;
+        gap: 40px;
+        margin-top: 20px;
+    }
+
+    /* === TARJETAS DE VIDEO ESTILO YOUTUBE === */
+    .video-card {
+        width: 340px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        overflow: hidden;
+        transition: transform 0.15s ease;
+    }
+
+    .video-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .thumb {
+        width: 100%;
+        background: #ddd;
+    }
+
+    /* Info del canal + título */
+    .channel-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px 0;
+    }
+
+    .channel-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .title {
+        font-size: 15px;
+        font-weight: 500;
+        color: #0f0f0f;
+        line-height: 1.2em;
+        max-height: 2.4em;
+        overflow: hidden;
+    }
+
+    .views {
+        color: #606060;
+        margin: 10px 16px;
+        font-size: 14px;
+    }
+
+    /* === BOTONES ESTILO YOUTUBE (CIRCULARES, MINIMALISTA) === */
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin: 20px 0 15px;
+    }
+
+    .btn {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        border: none;
+        background: #e5e5e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn:hover {
+        background: #d8d8d8;
+    }
+
+    .triangle-up {
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 24px solid #202020;
+    }
+
+    .triangle-down {
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 24px solid #202020;
+    }
+
+</style>
+</head>
+<body>
+
+<!-- Barra estilo YouTube -->
+<div class="topbar">
+    <img class="youtube-logo" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg">
+</div>
+<div class="container">
+    <div class="video-card">
+        <img class="thumb" id="thumb1" src="">
+        <div class="channel-info">
+            <img id="icon1" src="">
+            <span id="title1" class="title"></span>
+        </div>
+        <p class="views" id="views1"></p>
+    </div>
+
+    <div class="video-card">
+        <img class="thumb" id="thumb2" src="">
+        <div class="channel-info">
+            <img id="icon2" src="">
+            <span id="title2" class="title"></span>
+        </div>
+        <p class="views" id="views2" style="visibility: hidden;"></p>
+
+        <div class="buttons">
+            <button class="btn" onclick="choose('higher')">
+                <div class="triangle-up"></div>
+            </button>
+            <button class="btn" onclick="choose('lower')">
+                <div class="triangle-down"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_KEY = "AIzaSyA-tZwXlWOIoORspszbeFnBjdhLNtgdItc";  // Pega tu API Key aquí
+
+const VIDEO_IDS = [
+    "aHYvmY3nV5U", "5rjCRPG3mkw", "oM9fUlGET-w", "UaMBtjxvuMA", "VZzSBv6tXMw", "5qap5aO4i9A"
+];
+
+let videoData = [];
+let usedIndexes = [];
+
+async function fetchVideoData(id) {
+    const videoRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${API_KEY}&part=snippet,statistics`
+    );
+    const videoJson = await videoRes.json();
+    const v = videoJson.items[0];
+
+    const channelRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?id=${v.snippet.channelId}&key=${API_KEY}&part=snippet`
+    );
+    const channelJson = await channelRes.json();
+
+    return {
+        title: v.snippet.title,
+        thumb: v.snippet.thumbnails.high.url,
+        views: Number(v.statistics.viewCount),
+        icon: channelJson.items[0].snippet.thumbnails.default.url
+    };
+}
+
+async function loadAllVideos() {
+    for (let id of VIDEO_IDS) {
+        const data = await fetchVideoData(id);
+        videoData.push(data);
+    }
+    startGame();
+}
+
+function getRandomVideo(excludeIndex = null) {
+    let idx;
+    do {
+        idx = Math.floor(Math.random() * videoData.length);
+    } while (idx === excludeIndex || usedIndexes.includes(idx));
+
+    usedIndexes.push(idx);
+    if (usedIndexes.length >= videoData.length - 1) usedIndexes = [];
+
+    return { ...videoData[idx], index: idx };
+}
+
+let current, next;
+
+function render() {
+    document.getElementById("thumb1").src = current.thumb;
+    document.getElementById("icon1").src = current.icon;
+    document.getElementById("title1").innerText = current.title;
+    document.getElementById("views1").innerText = current.views.toLocaleString() + " views";
+
+    document.getElementById("thumb2").src = next.thumb;
+    document.getElementById("icon2").src = next.icon;
+    document.getElementById("title2").innerText = next.title;
+}
+
+function startGame() {
+    current = getRandomVideo();
+    next = getRandomVideo(current.index);
+    render();
+}
+
+function choose(option) {
+    const reveal = document.getElementById("views2");
+    reveal.style.visibility = "visible";
+    reveal.innerText = next.views.toLocaleString() + " views";
+
+    setTimeout(() => {
+        current = next;
+        next = getRandomVideo(current.index);
+        reveal.style.visibility = "hidden";
+        render();
+    }, 1200);
+}
+
+loadAllVideos();
+</script>
+
+</body>
+</html>
