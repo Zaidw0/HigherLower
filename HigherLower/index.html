@@ -175,7 +175,7 @@
 </div>
 
 <script>
-const API_KEY = "AIzaSyA-tZwXlWOIoORspszbeFnBjdhLNtgdItc";  // Pega tu API Key aquí
+
 
 const VIDEO_IDS = [
     "aHYvmY3nV5U", "5rjCRPG3mkw", "oM9fUlGET-w", "UaMBtjxvuMA", "VZzSBv6tXMw", "5qap5aO4i9A"
@@ -185,23 +185,8 @@ let videoData = [];
 let usedIndexes = [];
 
 async function fetchVideoData(id) {
-    const videoRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${API_KEY}&part=snippet,statistics`
-    );
-    const videoJson = await videoRes.json();
-    const v = videoJson.items[0];
-
-    const channelRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/channels?id=${v.snippet.channelId}&key=${API_KEY}&part=snippet`
-    );
-    const channelJson = await channelRes.json();
-
-    return {
-        title: v.snippet.title,
-        thumb: v.snippet.thumbnails.high.url,
-        views: Number(v.statistics.viewCount),
-        icon: channelJson.items[0].snippet.thumbnails.default.url
-    };
+    const res = await fetch(`/api/youtube?id=${id}`);
+    return await res.json();
 }
 
 async function loadAllVideos() {
@@ -261,3 +246,4 @@ loadAllVideos();
 
 </body>
 </html>
+
