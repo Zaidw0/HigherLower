@@ -6,7 +6,6 @@
 <title>Higher or Lower - YouTube API</title>
 
 <style>
-    /* === ESTILO GENERAL TIPO YOUTUBE === */
     body {
         margin: 0;
         background: #f1f1f1;
@@ -16,7 +15,6 @@
         align-items: center;
     }
 
-    /* Barra superior tipo YouTube */
     .topbar {
         width: 100%;
         height: 56px;
@@ -34,26 +32,27 @@
         height: 26px;
     }
 
-    h1 {
-        margin: 20px 0 10px;
-        font-size: 26px;
-        font-weight: 500;
-        color: #202020;
+    .score-box {
+        margin-top: 15px;
+        background: white;
+        padding: 10px 22px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
-    /* Contenedor general */
     .container {
         display: flex;
         gap: 40px;
         margin-top: 20px;
     }
 
-    /* === TARJETAS DE VIDEO ESTILO YOUTUBE === */
     .video-card {
-        width: 340px;
+        width: 550px;
         background: #fff;
         border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
         overflow: hidden;
         transition: transform 0.15s ease;
     }
@@ -62,12 +61,22 @@
         transform: translateY(-4px);
     }
 
-    .thumb {
+    .thumb-container {
+        position: relative;
         width: 100%;
+        height: 300px;
+        overflow: hidden;
         background: #ddd;
+        cursor: pointer;
     }
 
-    /* Info del canal + título */
+    .thumb-container img,
+    .thumb-container iframe {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
     .channel-info {
         display: flex;
         align-items: center;
@@ -91,22 +100,21 @@
     }
 
     .views {
-        color: #606060;
+        color: #414141;
         margin: 10px 16px;
-        font-size: 14px;
+        font-size: 20px;
     }
 
-    /* === BOTONES ESTILO YOUTUBE (CIRCULARES, MINIMALISTA) === */
     .buttons {
         display: flex;
         justify-content: center;
-        gap: 25px;
+        gap: 25px;  
         margin: 20px 0 15px;
     }
 
     .btn {
-        width: 62px;
-        height: 62px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
         border: none;
         background: #e5e5e5;
@@ -124,30 +132,78 @@
     .triangle-up {
         width: 0;
         height: 0;
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-        border-bottom: 24px solid #202020;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 18px solid #202020;
     }
 
     .triangle-down {
         width: 0;
         height: 0;
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-        border-top: 24px solid #202020;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 18px solid #202020;
     }
 
+    /* === MODAL === */
+    .modal {
+        display: none; 
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        width: 300px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .modal-content h2 {
+        margin-bottom: 20px;
+    }
+
+    .modal-content button {
+        background: #ff0000;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.2s;
+    }
+
+    .modal-content button:hover {
+        background: #cc0000;
+    }
 </style>
 </head>
 <body>
 
-<!-- Barra estilo YouTube -->
 <div class="topbar">
     <img class="youtube-logo" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg">
 </div>
+
+<div class="score-box" id="score">Puntuación: 0</div>
+
 <div class="container">
     <div class="video-card">
-        <img class="thumb" id="thumb1" src="">
+        <div class="thumb-container" onclick="playWithSound(1)">
+            <img class="thumb" id="thumb1" src="">
+        </div>
+
         <div class="channel-info">
             <img id="icon1" src="">
             <span id="title1" class="title"></span>
@@ -156,7 +212,10 @@
     </div>
 
     <div class="video-card">
-        <img class="thumb" id="thumb2" src="">
+        <div class="thumb-container" onclick="playWithSound(2)">
+            <img class="thumb" id="thumb2" src="">
+        </div>
+
         <div class="channel-info">
             <img id="icon2" src="">
             <span id="title2" class="title"></span>
@@ -174,8 +233,17 @@
     </div>
 </div>
 
-<script>
+<!-- MODAL -->
+<div id="loseModal" class="modal">
+    <div class="modal-content">
+        <h2>¡Perdiste!</h2>
+        <p id="recordText">Tu puntuación fue: 0</p>
+        <button onclick="restartGame()">Reiniciar</button>
+    </div>
+</div>
 
+<script>
+const API_KEY = "AIzaSyA-tZwXlWOIoORspszbeFnBjdhLNtgdItc";
 
 const VIDEO_IDS = [
     "aHYvmY3nV5U", "5rjCRPG3mkw", "oM9fUlGET-w", "UaMBtjxvuMA", "VZzSBv6tXMw", "5qap5aO4i9A"
@@ -183,6 +251,8 @@ const VIDEO_IDS = [
 
 let videoData = [];
 let usedIndexes = [];
+let score = 0;
+let record = 0;
 
 async function fetchVideoData(id) {
     const res = await fetch(`/api/youtube?id=${id}`);
@@ -204,6 +274,7 @@ function getRandomVideo(excludeIndex = null) {
     } while (idx === excludeIndex || usedIndexes.includes(idx));
 
     usedIndexes.push(idx);
+
     if (usedIndexes.length >= videoData.length - 1) usedIndexes = [];
 
     return { ...videoData[idx], index: idx };
@@ -222,23 +293,112 @@ function render() {
     document.getElementById("title2").innerText = next.title;
 }
 
+function updateScore() {
+    document.getElementById("score").innerText = "Puntuación: " + score;
+}
+
 function startGame() {
+    score = 0;
+    updateScore();
     current = getRandomVideo();
     next = getRandomVideo(current.index);
     render();
 }
 
-function choose(option) {
+function showModal() {
+    document.getElementById("recordText").innerText = "Tu puntuación fue: " + score;
+    document.getElementById("loseModal").style.display = "flex";
+}
+
+function restartGame() {
+    document.getElementById("loseModal").style.display = "none";
+    const reveal = document.getElementById("views2");
+    reveal.style.visibility = "hidden";
+    startGame();
+}
+
+// Función para animar vistas y devolver una promesa
+function animateViews(start, end) {
+    return new Promise((resolve) => {
+        const reveal = document.getElementById("views2");
+        const duration = 1000; // Duración de la animación en ms
+        const stepTime = 20; // Tiempo entre incrementos en ms
+        const steps = Math.ceil(duration / stepTime);
+        let currentStep = 0;
+
+        const increment = (end - start) / steps;
+
+        const interval = setInterval(() => {
+            currentStep++;
+            const value = Math.floor(start + increment * currentStep);
+            reveal.innerText = value.toLocaleString() + " views";
+
+            if (currentStep >= steps) {
+                reveal.innerText = end.toLocaleString() + " views"; 
+                clearInterval(interval);
+                resolve(); // Resolvemos la promesa cuando termina
+            }
+        }, stepTime);
+    });
+}
+
+// Modificar choose() para esperar animación
+async function choose(option) {
     const reveal = document.getElementById("views2");
     reveal.style.visibility = "visible";
-    reveal.innerText = next.views.toLocaleString() + " views";
 
+    const correct =
+        (option === "higher" && next.views > current.views) ||
+        (option === "lower" && next.views < current.views);
+
+    // Animar vistas primero
+    await animateViews(0, next.views);
+
+    if (!correct) {
+        showModal();
+        return;
+    }
+
+    score++;
+    if (score > record) record = score;
+    updateScore();
+
+    // Esperar 2 segundos extra antes de renderizar siguiente par
     setTimeout(() => {
+        [1,2].forEach(n => {
+            const container = document.getElementById("thumb" + n).parentNode;
+            container.querySelectorAll("iframe").forEach(i => i.remove());
+            document.getElementById("thumb" + n).style.display = "block";
+        });
+
         current = next;
         next = getRandomVideo(current.index);
+
         reveal.style.visibility = "hidden";
+
         render();
-    }, 1200);
+    }, 2000);
+}
+
+
+
+function playWithSound(n) {
+    const img = document.getElementById("thumb" + n);
+    const videoId = (n === 1 ? current.videoId : next.videoId);
+
+    img.parentNode.querySelectorAll("iframe").forEach(i => i.remove());
+
+    const iframe = document.createElement("iframe");
+    iframe.src =
+        `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&playsinline=1`;
+    iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute("allow", "autoplay; encrypted-media");
+
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+
+    img.style.display = "none";
+    img.parentNode.appendChild(iframe);
 }
 
 loadAllVideos();
@@ -246,4 +406,3 @@ loadAllVideos();
 
 </body>
 </html>
-
