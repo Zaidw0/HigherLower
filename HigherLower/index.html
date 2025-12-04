@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Higher or Lower - YouTube API</title>
+<link rel="icon" type="image/png" href="vista.png">
+
 
 <style>
     body {
         margin: 0;
-        background: #f1f1f1;
+        background: #eaeaea;
         font-family: Roboto, Arial, sans-serif;
         display: flex;
         flex-direction: column;
@@ -117,16 +119,16 @@
         height: 50px;
         border-radius: 50%;
         border: none;
-        background: #e5e5e5;
+        background: #3e3e3e;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
+        cursor: pointer;    
         transition: 0.2s;
     }
 
     .btn:hover {
-        background: #d8d8d8;
+        background: #000000;
     }
 
     .triangle-up {
@@ -134,7 +136,7 @@
         height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-bottom: 18px solid #202020;
+        border-bottom: 18px solid #ffffff;
     }
 
     .triangle-down {
@@ -142,7 +144,7 @@
         height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-top: 18px solid #202020;
+        border-top: 18px solid #ffffff;
     }
 
     /* === MODAL === */
@@ -188,20 +190,236 @@
     .modal-content button:hover {
         background: #cc0000;
     }
+
+
+    #confetti-container {
+    position: fixed;
+    bottom: 0; /* sale desde abajo */
+    left: 0;
+    width: 100%;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 200;
+    }
+
+   #confetti-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 9999;
+    }
+
+    .confetti {
+        position: absolute;
+        opacity: 0.95;
+        will-change: transform, opacity;
+    }
+
+
+    
+
+/* ------------- 📱 AJUSTE TOTAL PARA CELULARES ------------- */
+
+@media (max-width: 900px) {
+
+    /* contenedor vertical */
+    .container {
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+        align-items: center;
+    }
+
+    .video-card {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .thumb-container {
+        height: 220px;
+    }
+
+    .title {
+        font-size: 14px;
+        max-height: none;
+    }
+
+    .views {
+        font-size: 18px;
+    }
+
+    .buttons {
+        gap: 15px;
+    }
+
+    .btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .triangle-up, .triangle-down {
+        border-left-width: 8px;
+        border-right-width: 8px;
+    }
+
+    .triangle-up {
+        border-bottom-width: 14px;
+    }
+    .triangle-down {
+        border-top-width: 14px;
+    }
+}
+
+.play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.play-overlay .triangle {
+    width: 0;
+    height: 0;
+    border-left: 22px solid white;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+}
+
+.thumb-container:hover .play-overlay {
+    background: rgba(0,0,0,0.75);
+}
+
+/* versión móvil más pequeña */
+@media (max-width: 480px) {
+    .play-overlay {
+        width: 45px;
+        height: 45px;
+    }
+
+    .play-overlay .triangle {
+        border-left-width: 16px;
+        border-top-width: 10px;
+        border-bottom-width: 10px;
+    }
+}
+
+
+/* EXTRA: modo muy pequeño (teléfonos chicos) */
+@media (max-width: 480px) {
+    .thumb-container {
+        height: 50px;
+    }
+
+    .video-card {
+        max-width: 95%;
+    }
+
+    .score-box {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
 </style>
-</head>
+</head> 
 <body>
 
-<div class="topbar">
-    <img class="youtube-logo" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg">
+<!-- BARRA SUPERIOR -->
+<div style="
+    width: 97%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-family: Roboto, Arial, sans-serif;
+">
+
+    <!-- LOGO YOUTUBE (IZQUIERDA) -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="https://www.logo.wine/a/logo/YouTube/YouTube-Icon-Full-Color-Logo.wine.svg"
+             alt="YouTube"
+             style="height: 35px;">
+        <span style="font-size: 18px; font-weight: bold;">Higher or Lower</span>
+    </div>
+
+    <!-- CREDITOS (DERECHA) -->
+    <a href="https://www.youtube.com/@Zaid.q0"
+       target="_blank"
+       style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#444;">
+
+        <span style="font-size: 12px;">Created by</span>
+
+        <img src="logo.jpg"
+            alt="Canal"
+            style="
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                object-fit: cover;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            "
+        ></a>
 </div>
 
-<div class="score-box" id="score">Puntuación: 0</div>
+
+<div id="score-container" style="
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Roboto, Arial, sans-serif;
+    margin-top: 10px;
+">
+    <div id="score" style="
+        background: white;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.15);
+    ">
+        Score: 0
+    </div>
+
+    <div id="best" style="
+        background: #262626bb;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #ffffff;
+        border: 1px solid #ddd;
+    ">
+        Record: 0
+    </div>
+</div>
+
 
 <div class="container">
     <div class="video-card">
-        <div class="thumb-container" onclick="playWithSound(1)">
+       <div class="thumb-container" onclick="playWithSound(1)">
             <img class="thumb" id="thumb1" src="">
+            <div class="play-overlay" id="play1">
+                <div class="triangle"></div>
+            </div>
         </div>
 
         <div class="channel-info">
@@ -214,6 +432,9 @@
     <div class="video-card">
         <div class="thumb-container" onclick="playWithSound(2)">
             <img class="thumb" id="thumb2" src="">
+            <div class="play-overlay" id="play2">
+                <div class="triangle"></div>
+            </div>
         </div>
 
         <div class="channel-info">
@@ -236,49 +457,74 @@
 <!-- MODAL -->
 <div id="loseModal" class="modal">
     <div class="modal-content">
-        <h2>¡Perdiste!</h2>
-        <p id="recordText">Tu puntuación fue: 0</p>
-        <button onclick="restartGame()">Reiniciar</button>
+        <h2>Game over</h2>
+        <p id="recordText">Score: 0</p>
+        <button onclick="restartGame()">Restart</button>
     </div>
 </div>
 
+
+<div id="confetti-container"></div>
+
 <script>
-const API_KEY = "AIzaSyA-tZwXlWOIoORspszbeFnBjdhLNtgdItc";
+
 
 const VIDEO_IDS = [
-    "aHYvmY3nV5U", "5rjCRPG3mkw", "oM9fUlGET-w", "UaMBtjxvuMA", "VZzSBv6tXMw", "5qap5aO4i9A"
+   "aHYvmY3nV5U", "5rjCRPG3mkw", "oM9fUlGET-w", "UaMBtjxvuMA", 
+"VZzSBv6tXMw", "5qap5aO4i9A", "0e3GPea1Tyg", "zxYjTTXc-J8",
+ "4SNThp0YiU4", "vcdxMNgHTrc", "2iXfRr6-vks", "L1Ta38LNcUE", 
+"_u3NH5yGZt0", "npTC6b5-yvM", "GW_fdXHOWp4", "htg_e_Q8D6s", 
+"OTlVmfO_j0Q", "wAMZ6KpMGQI", "5qR82rFJG7I", "b89CnP0Iq30",
+"jNQXAC9IVRw", "_OBlgSz8sSM", "dhsy6epaJGs", "3bTER3G6YlI",
+"vM34iKSsW0Y", "t7gIutuQQLs", "lSm4QZqN8cA", "M4LWw7Jpij8",
+"F81wlI9iEpw", "EbaRo2hMEqM", "bf-B1QORoMM", "yI9Ynn6JjvM",
+"6Dh-RL__uN4", "oE2rfyhIsuk", "dQw4w9WgXcQ", "2yJgwwDcgV8",
+"zAG83xZhgsc", "kJQP7kiw5Fk", "uAOR6ib95kQ", "HyHNuVaZJ-k",
+"XqZsoesa55w", "YeJiADXCDis", "M3oT3-4sSOY", "leEGG-o0cJQ",
+"dBxOYE2j55U", "KK9bwTlAvgo", "sboXdNY4g9I", "TaQj43Lf3tw",
+"bix8qWbrZ-0", "iuQoT2hUVjk", "rYyfQiTHs7w", "QdBZY2fkU-0",
+"Ci_zad39Uhw"
 ];
 
-let videoData = [];
+let videoCache = {};
 let usedIndexes = [];
 let score = 0;
-let record = 0;
+let record = Number(localStorage.getItem("higherlower_record")) || 0;
+document.getElementById("best").innerText = "Record: " + record;
+
 
 async function fetchVideoData(id) {
     const res = await fetch(`/api/youtube?id=${id}`);
     return await res.json();
 }
 
-async function loadAllVideos() {
-    for (let id of VIDEO_IDS) {
-        const data = await fetchVideoData(id);
-        videoData.push(data);
-    }
-    startGame();
-}
 
-function getRandomVideo(excludeIndex = null) {
+async function getRandomVideo(excludeIndex = null) {
     let idx;
+
     do {
-        idx = Math.floor(Math.random() * videoData.length);
+        idx = Math.floor(Math.random() * VIDEO_IDS.length);
     } while (idx === excludeIndex || usedIndexes.includes(idx));
 
     usedIndexes.push(idx);
 
-    if (usedIndexes.length >= videoData.length - 1) usedIndexes = [];
+    // Reiniciar lista usada si ya casi se usaron todos
+    if (usedIndexes.length >= VIDEO_IDS.length - 1) usedIndexes = [];
 
-    return { ...videoData[idx], index: idx };
+    const videoId = VIDEO_IDS[idx];
+
+    // ↓↓↓ Si ya está en caché, no llamamos a API
+    if (videoCache[videoId]) {
+        return { ...videoCache[videoId], index: idx };
+    }
+
+    // ↓↓↓ Primera vez → llamar API y guardar en caché
+    const data = await fetchVideoData(videoId);
+    videoCache[videoId] = data;
+
+    return { ...data, index: idx };
 }
+
 
 let current, next;
 
@@ -291,29 +537,49 @@ function render() {
     document.getElementById("thumb2").src = next.thumb;
     document.getElementById("icon2").src = next.icon;
     document.getElementById("title2").innerText = next.title;
+
+    document.getElementById("play1").style.display = "flex";
+    document.getElementById("play2").style.display = "flex";
 }
 
 function updateScore() {
-    document.getElementById("score").innerText = "Puntuación: " + score;
+    document.getElementById("score").innerText = "Score: " + score;
 }
 
-function startGame() {
+function updateBest() {
+    document.getElementById("best").innerText = "Record: " + record;
+}
+
+async function startGame() {
     score = 0;
     updateScore();
-    current = getRandomVideo();
-    next = getRandomVideo(current.index);
+    updateBest();
+    current = await getRandomVideo();
+    next = await getRandomVideo(current.index);
     render();
 }
 
 function showModal() {
-    document.getElementById("recordText").innerText = "Tu puntuación fue: " + score;
+    document.getElementById("recordText").innerText = "Score: " + score;
     document.getElementById("loseModal").style.display = "flex";
 }
 
 function restartGame() {
     document.getElementById("loseModal").style.display = "none";
+
+    // Ocultar vistas
     const reveal = document.getElementById("views2");
     reveal.style.visibility = "hidden";
+
+    // Eliminar cualquier iframe activo (video reproduciéndose)
+    [1, 2].forEach(n => {
+        const container = document.getElementById("thumb" + n).parentNode;
+        container.querySelectorAll("iframe").forEach(i => i.remove());
+        document.getElementById("thumb" + n).style.display = "block";
+    });
+
+    document.getElementById("play1").style.display = "flex";
+    document.getElementById("play2").style.display = "flex";
     startGame();
 }
 
@@ -342,6 +608,67 @@ function animateViews(start, end) {
     });
 }
 
+function spawnConfetti() {
+    const container = document.getElementById("confetti-container");
+    const total = 40; // más confetti pero sin lag
+
+    for (let i = 0; i < total; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+
+        // Tamaño más natural
+        const size = 6 + Math.random() * 10;
+        confetti.style.width = size + "px";
+        confetti.style.height = size * (0.6 + Math.random()) + "px";
+
+        // Colores más bonitos
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 85%, 60%)`;
+
+        // Formas aleatorias: cuadrados, rectángulos, círculos
+        const r = Math.random();
+        if (r < 0.33) {
+            confetti.style.borderRadius = "0%";
+        } else if (r < 0.66) {
+            confetti.style.borderRadius = "50%";
+        } else {
+            confetti.style.transform = "skew(15deg)";
+        }
+
+        // Posición inicial (fondo)
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.bottom = "0px";
+
+        // Animación con keyframes dinámicos
+        const translateY = 250 + Math.random() * 250; // altura de ascenso
+        const translateX = (Math.random() - 0.5) * 200; // movimiento lateral
+        const rotate = Math.random() * 720;
+
+        confetti.animate(
+            [
+                { 
+                    transform: `translate(0,0) rotate(0deg)`,
+                    opacity: 1 
+                },
+                { 
+                    transform: `translate(${translateX}px, -${translateY}px) rotate(${rotate}deg)`,
+                    opacity: 0 
+                }
+            ],
+            {
+                duration: 1200 + Math.random() * 300, // tiempos distintos
+                easing: "cubic-bezier(0.33, 1, 0.68, 1)", // ease-out suave
+                fill: "forwards"
+            }
+        );
+
+        container.appendChild(confetti);
+
+        // Eliminar después
+        setTimeout(() => confetti.remove(), 2000);
+    }
+}
+
+
 // Modificar choose() para esperar animación
 async function choose(option) {
     const reveal = document.getElementById("views2");
@@ -358,13 +685,18 @@ async function choose(option) {
         showModal();
         return;
     }
-
+    spawnConfetti();
     score++;
-    if (score > record) record = score;
+    if (score > record) {
+    record = score;
+    localStorage.setItem("higherlower_record", record);
+    document.getElementById("best").innerText = "Record: " + record;
+}
+    updateBest();
     updateScore();
 
     // Esperar 2 segundos extra antes de renderizar siguiente par
-    setTimeout(() => {
+    setTimeout(async () => {
         [1,2].forEach(n => {
             const container = document.getElementById("thumb" + n).parentNode;
             container.querySelectorAll("iframe").forEach(i => i.remove());
@@ -372,7 +704,7 @@ async function choose(option) {
         });
 
         current = next;
-        next = getRandomVideo(current.index);
+        next = await getRandomVideo(current.index);
 
         reveal.style.visibility = "hidden";
 
@@ -384,6 +716,7 @@ async function choose(option) {
 
 function playWithSound(n) {
     const img = document.getElementById("thumb" + n);
+    const overlay = document.getElementById("play" + n);
     const videoId = (n === 1 ? current.videoId : next.videoId);
 
     img.parentNode.querySelectorAll("iframe").forEach(i => i.remove());
@@ -393,16 +726,18 @@ function playWithSound(n) {
         `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&playsinline=1`;
     iframe.setAttribute("frameborder", "0");
     iframe.setAttribute("allow", "autoplay; encrypted-media");
-
     iframe.style.width = "100%";
     iframe.style.height = "100%";
 
     img.style.display = "none";
+    overlay.style.display = "none";  // OCULTAR ÍCONO PLAY
     img.parentNode.appendChild(iframe);
 }
-
-loadAllVideos();
+let savedRecord = localStorage.getItem("higherlower_record");
+if (savedRecord) {
+    record = Number(savedRecord);
+}
+startGame();
 </script>
-
 </body>
 </html>
