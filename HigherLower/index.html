@@ -678,41 +678,39 @@ async function choose(option) {
         (option === "higher" && next.views > current.views) ||
         (option === "lower" && next.views < current.views);
 
-    // 🔹 Ejecutar animación de número (1 segundo)
+    // Animar vistas primero
     await animateViews(0, next.views);
 
     if (!correct) {
-        // ❌ Perdiste
-        if (score > record) {
-            record = score;
-            localStorage.setItem("higherlower_record", record);
-        }
-
-        updateBest();
         showModal();
         return;
     }
-
-    // ✔ Respuesta correcta
-    score++;
-    updateScore();
     spawnConfetti();
-
-    // Mostrar views del current también por estética
-    document.getElementById("views1").innerText =
-        current.views.toLocaleString() + " views";
-
-    // Cambiar: next ahora pasa a ser el current
-    current = next;
-    next = await getRandomVideo(current.index);
-
-    // Limpiar animaciones + reset del 2do video
-    reveal.style.visibility = "hidden";
-
-    // Forzar re-render
-    render();
+    score++;
+    if (score > record) {
+    record = score;
+    localStorage.setItem("higherlower_record", record);
+    document.getElementById("best").innerText = "Record: " + record;
 }
+    updateBest();
+    updateScore();
 
+    // Esperar 2 segundos extra antes de renderizar siguiente par
+    setTimeout(async () => {
+        [1,2].forEach(n => {
+            const container = document.getElementById("thumb" + n).parentNode;
+            container.querySelectorAll("iframe").forEach(i => i.remove());
+            document.getElementById("thumb" + n).style.display = "block";
+        });
+
+        current = next;
+        next = await getRandomVideo(current.index);
+
+        reveal.style.visibility = "hidden";
+
+        render();
+    }, 2000);
+}
 
 
 
