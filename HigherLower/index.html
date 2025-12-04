@@ -719,18 +719,23 @@ function playWithSound(n) {
     const overlay = document.getElementById("play" + n);
     const videoId = (n === 1 ? current.videoId : next.videoId);
 
+    // Eliminar cualquier iframe previo
     img.parentNode.querySelectorAll("iframe").forEach(i => i.remove());
 
     const iframe = document.createElement("iframe");
-    iframe.src =
-        `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1`;
-    iframe.setAttribute("frameborder", "0");
-    iframe.setAttribute("allow", "autoplay; encrypted-media");
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&playsinline=1`;
+    iframe.width = "100%";
+    iframe.height = "100%";
+    iframe.frameBorder = "0";
+    iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.loading = "lazy";
+    iframe.title = "YouTube video player";
 
+    // Mostrar iframe solo después de que el usuario haga click
+    // Esto evita bloqueos de autoplay
     img.style.display = "none";
-    overlay.style.display = "none";  // OCULTAR ÍCONO PLAY
+    overlay.style.display = "none";
     img.parentNode.appendChild(iframe);
 }
 let savedRecord = localStorage.getItem("higherlower_record");
@@ -741,6 +746,7 @@ startGame();
 </script>
 </body>
 </html>
+
 
 
 
