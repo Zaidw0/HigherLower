@@ -725,15 +725,20 @@ function playWithSound(n) {
     iframe.src =
         `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&playsinline=1`;
     iframe.setAttribute("frameborder", "0");
-    iframe.setAttribute("allow", "autoplay; encrypted-media");
+    iframe.setAttribute(
+    "allow",
+    "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    );
+    iframe.setAttribute("allowfullscreen", "");
     iframe.style.width = "100%";
     iframe.style.height = "100%";
-    iframe.allowFullscreen = "enable";
 
     img.style.display = "none";
     overlay.style.display = "none";  // OCULTAR ÍCONO PLAY
     img.parentNode.appendChild(iframe);
 }
+
+    
 let savedRecord = localStorage.getItem("higherlower_record");
 if (savedRecord) {
     record = Number(savedRecord);
@@ -742,6 +747,7 @@ startGame();
 </script>
 </body>
 </html>
+
 
 
 
